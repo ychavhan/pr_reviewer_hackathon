@@ -28,10 +28,10 @@ jobs:
 
       - name: Run ML Reviewer
         run: |
-          python ml_reviewer.py
+          python src/ml_reviewer.py
 
       - name: Post Comments to PR
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          python post_review_comments.py
+          python src/post_review_comments.py
