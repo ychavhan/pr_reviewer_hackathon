@@ -1,0 +1,70 @@
+# AI GitHub PR Reviewer
+
+This GitHub Action automatically reviews Pull Requests using AI, providing code feedback directly in your PR interface.
+
+## Features
+
+- Runs automatically when PRs are opened or updated
+- Reviews code changes and provides specific feedback
+- Generates an overall PR summary
+- Posts comments directly in the GitHub UI
+- Configurable to match your team's needs
+
+## Setup Instructions
+
+1. **Create the necessary directories in your repository**:
+   ```
+   mkdir -p .github/workflows/scripts .github/config
+   ```
+
+2. **Add all the required files**:
+   - `.github/workflows/ai-pr-review.yml` - GitHub Action workflow
+   - `.github/workflows/scripts/pr_reviewer.py` - Main script
+   - `.github/workflows/scripts/github_api.py` - GitHub API module
+   - `.github/workflows/scripts/ai_reviewer.py` - AI review module
+   - `.github/workflows/scripts/utils.py` - Utilities module
+   - `.github/config/reviewer_config.json` - Configuration file
+
+3. **Set up the required secrets in your GitHub repository**:
+   - Go to your repository settings → Secrets and variables → Actions
+   - Add a new repository secret named `OPENAI_API_KEY` with your OpenAI API key
+
+4. **Push these changes to your repository**
+
+## Usage
+
+Once set up, the AI PR reviewer will automatically run when:
+- A new PR is opened
+- An existing PR is updated with new commits
+
+The reviewer will:
+1. Analyze the code changes
+2. Add specific comments to the code
+3. Provide an overall summary comment
+
+## Configuration
+
+You can customize the reviewer by editing the `.github/config/reviewer_config.json` file:
+
+| Option | Description |
+|--------|-------------|
+| `max_files` | Maximum number of files to review |
+| `max_changes` | Skip files with more than this many changes |
+| `ai_model` | OpenAI model to use for reviews |
+| `review_event` | GitHub review event type (COMMENT, APPROVE, REQUEST_CHANGES) |
+| `file_exclusions` | Glob patterns for files to exclude |
+| `custom_prompts` | Custom prompts for AI reviewer |
+| `review_focus` | Areas to focus on during review |
+| `language_specific_checks` | Language-specific items to check |
+
+## Examples
+
+Here's an example of what the PR review looks like:
+
+### File Comments
+The reviewer will add specific comments to code changes:
+
+```
+### AI Code Review
+
+This change adds proper error handling

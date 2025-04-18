@@ -1,0 +1,54 @@
+{
+  "max_files": 10,
+  "max_changes": 500,
+  "ai_model": "gpt-4-turbo",
+  "review_event": "COMMENT",
+  "exclude_file_size_threshold": 1000,
+  "file_exclusions": [
+    "*.lock",
+    "package-lock.json",
+    "yarn.lock",
+    "*.min.js",
+    "*.min.css",
+    "*.svg",
+    "*.png",
+    "*.jpg",
+    "*.jpeg",
+    "*.gif",
+    "*.pdf",
+    "*.ico",
+    "node_modules/**",
+    "dist/**",
+    "build/**",
+    "vendor/**",
+    "**/migrations/**"
+  ],
+  "custom_prompts": {
+    "summary": "Please provide a concise yet thorough review of this PR focusing on: 1) Code quality, 2) Potential issues, 3) Security concerns, and 4) General recommendations.",
+    "file_review": "As an expert code reviewer, please analyze this code change and identify any issues, improvements, or security concerns."
+  },
+  "review_focus": {
+    "security": true,
+    "performance": true,
+    "best_practices": true,
+    "documentation": true,
+    "testing": true
+  },
+  "language_specific_checks": {
+    "python": [
+      "Type hints",
+      "Docstrings",
+      "PEP 8 compliance"
+    ],
+    "javascript": [
+      "ESLint rules",
+      "Modern syntax usage",
+      "Potential memory leaks"
+    ],
+    "typescript": [
+      "Type safety",
+      "Interface usage",
+      "TSConfig compliance"
+    ]
+  }
+}

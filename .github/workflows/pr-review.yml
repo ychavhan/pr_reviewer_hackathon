@@ -1,37 +1,30 @@
-name: Intelligent PR Review
+name: PR Alert
 
 on:
   pull_request:
-    types: [opened, synchronize]
+    types: [opened]
 
 jobs:
-  review:
+  post-alert:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout PR Code
-        uses: actions/checkout@v3
-
-      - name: Setup Python
-        uses: actions/setup-python@v4
+      - name: Post Hardcoded Alert Comment
+        uses: actions/github-script@v7
         with:
-          python-version: '3.10'
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `
+🚨 **IMPORTANT NOTICE** 🚨
 
-      - name: Install Dependencies
-        run: |
-          pip install -r requirements.txt
-          sudo apt-get install -y clang-tidy
+Please read carefully before proceeding:
 
-      - name: Run Static Analysis
-        run: |
-          flake8 . || true
-          clang-tidy **/*.cpp -- -std=c++17 || true
+1. This is a protected module. Do **NOT** merge without approvals from `@team-leads`.
+2. Make sure unit tests cover all edge cases — untested PRs will be rejected.
+3. Add the following reviewers: \`@reviewer1\`, \`@reviewer2\`
 
-      - name: Run ML Reviewer
-        run: |
-          python src/ml_reviewer.py
-
-      - name: Post Comments to PR
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          python src/post_review_comments.py
+Thanks! ✅
+              `
+            })

@@ -1,26 +1,49 @@
-from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
-import subprocess
+# Simple AI-based PR Reviewer (Backend Only)
+# Tech: Flask + OpenAI + GitHub API
+
+from flask import Flask, request, jsonify
+from github import Github
+import openai
 import os
 
-model_name = "Salesforce/codet5-base"
-tokenizer = AutoTokenizer.from_pretrained(model_name)
-model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
+app = Flask(__name__)
 
-# Get list of changed Python files
-git_diff_cmd = "git diff --name-only origin/main HEAD"
-changed_files = subprocess.check_output(git_diff_cmd.split()).decode().splitlines()
+# Set your tokens here
+GITHUB_TOKEN = "your_github_token"
+OPENAI_API_KEY = "your_openai_key"
+openai.api_key = OPENAI_API_KEY
+g = Github(GITHUB_TOKEN)
 
-suggestions = []
-print("Test Review PR")
-for file in changed_files:
-    if file.endswith(".py"):
-        with open(file, "r") as f:
-            code = f.read()
-            prompt = "review code: " + code
-            inputs = tokenizer.encode(prompt, return_tensors="pt", truncation=True, max_length=512)
-            outputs = model.generate(inputs, max_length=256)
-            review = tokenizer.decode(outputs[0], skip_special_tokens=True)
-            suggestions.append(f"**{file}**:\n{review}\n")
+@app.route("/webhook", methods=["POST"])
+def github_webhook():
+    data = request.json
+    if "pull_request" in data:
+        pr_url = data["pull_request"]["url"]
+        repo_full = data["repository"]["full_name"]
+        pr_number = data["number"]
 
-with open("suggestions.txt", "w") as f:
-    f.write("\n".join(suggestions))
+        repo = g.get_repo(repo_full)
+        pr = repo.get_pull(pr_number)
+        diff = pr.diff_url  # You can also use pr.get_files() for better granularity
+
+        # Generate a review using OpenAI
+        review_text = generate_ai_review(pr.title, pr.body)
+
+        # Post a comment to the PR
+        pr.create_issue_comment(f"🤖 AI Review:\n{review_text}")
+        return jsonify({"msg": "Review posted"}), 200
+    return jsonify({"msg": "No PR found"}), 400
+
+def generate_ai_review(title, body):
+    prompt = f"Review this pull request for code quality, bugs, and suggestions.\nTitle: {title}\nDescription: {body}"
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "You are a helpful code reviewer."},
+            {"role": "user", "content": prompt}
+        ]
+    )
+    return response["choices"][0]["message"]["content"]
+
+if __name__ == "__main__":
+    app.run(port=5000)
