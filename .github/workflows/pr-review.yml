@@ -17,14 +17,14 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               body: `
-🚨 **IMPORTANT NOTICE** 🚨
+## 🚨 IMPORTANT NOTICE 🚨
 
 Please read carefully before proceeding:
 
-1. This is a protected module. Do **NOT** merge without approvals from `@team-leads`.
-2. Make sure unit tests cover all edge cases — untested PRs will be rejected.
-3. Add the following reviewers: \`@reviewer1\`, \`@reviewer2\`
+  1. This is a protected module. Do **NOT** merge without approvals from \`@team-leads\`.
+  2. Make sure unit tests cover all edge cases — untested PRs will be rejected.
+  3. Add the following reviewers: \`@reviewer1\`, \`@reviewer2\`
 
-Thanks! ✅
+  Thanks! ✅
               `
-            })
+            });
