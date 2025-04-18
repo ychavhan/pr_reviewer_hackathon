@@ -19,7 +19,7 @@ jobs:
               body: [
                 '## 🚨 IMPORTANT NOTICE 🚨',
                 '',
-                'Please read carefully before proceeding:',
+                'Please Check below Errors carefully before proceeding:',
                 '',
                 '1. This is a protected module. Do **NOT** merge without approvals from `@team-leads`.',
                 '2. Make sure unit tests cover all edge cases — untested PRs will be rejected.',
